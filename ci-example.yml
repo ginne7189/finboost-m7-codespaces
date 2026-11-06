@@ -1,0 +1,17 @@
+name: local-lab-tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest -v
+      - run: docker build -t finboost-lab:ci .
+# 선택 실습: 이 폴더의 내용을 저장소 최상위에 두고,
+# 이 파일을 .github/workflows/test.yml 로 복사합니다.
+# 교육용 예시이며 원격 push나 클라우드 배포를 자동 수행하지 않습니다.

@@ -1,0 +1,441 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FinBoost local training API",
+    "version": "1.1.0",
+    "description": "가상 계좌 전용. 응답 헤더 X-Request-ID로 서버 로그를 추적합니다. 실제 금융기관 미연결."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000"
+    }
+  ],
+  "security": [
+    {
+      "TrainingToken": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "서버 상태",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "실행 상태",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/accounts": {
+      "get": {
+        "summary": "잔액 조회",
+        "responses": {
+          "200": {
+            "description": "조회 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accounts"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/events": {
+      "get": {
+        "summary": "이벤트 조회",
+        "responses": {
+          "200": {
+            "description": "조회 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Events"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/transfers": {
+      "post": {
+        "summary": "가상 송금",
+        "description": "계좌가 다르고 잔액이 충분해야 함. 상태 accepted는 외부 은행의 승인 상태가 아님. 본문 최대4096바이트.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "새 거래 저장",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferResult"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "기존 동일 거래 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferResult"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "오류 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "HTTP 요청 한 번의 서버 추적 번호. 업무 키와 거래 번호와 다릅니다.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "TrainingToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "학습용 LAB_TOKEN. 사용자별 계좌 권한을 의미하지 않음."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "required": [
+          "id",
+          "balance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Accounts": {
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Account"
+            }
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "processed": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "Events": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          }
+        }
+      },
+      "TransferRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from_account",
+          "to_account",
+          "amount_krw"
+        ],
+        "properties": {
+          "from_account": {
+            "type": "string"
+          },
+          "to_account": {
+            "type": "string"
+          },
+          "amount_krw": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        }
+      },
+      "TransferResult": {
+        "type": "object",
+        "required": [
+          "transfer_id",
+          "status",
+          "amount_krw",
+          "replayed"
+        ],
+        "properties": {
+          "transfer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "accepted"
+            ]
+          },
+          "amount_krw": {
+            "type": "integer"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

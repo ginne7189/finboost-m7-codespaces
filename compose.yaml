@@ -1,0 +1,23 @@
+name: finboost-m7-v17
+services:
+  api:
+    build: .
+    image: finboost-lab:v17
+    environment:
+      LAB_HOST: 0.0.0.0
+      LAB_PORT: "8000"
+      LAB_DB_PATH: ${LAB_DB_PATH:-/app/data/lab.db}
+      LAB_TOKEN: ${LAB_TOKEN:?Run configure_lab.py --init first}
+    ports:
+      - "127.0.0.1:${LAB_HOST_PORT:-8001}:8000"
+    volumes:
+      - lab-data:/app/data
+  client:
+    image: finboost-lab:v17
+    profiles: [tools]
+    environment:
+      LAB_TOKEN: ${LAB_TOKEN:?Run configure_lab.py --init first}
+      LAB_BASE_URL: http://api:8000
+    entrypoint: [python, client.py]
+volumes:
+  lab-data:

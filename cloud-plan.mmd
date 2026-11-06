@@ -1,0 +1,6 @@
+flowchart LR
+  Client["요청 프로그램"] --> Entry["HTTPS 접속 지점"]
+  Entry --> API["송금 API"]
+  API --> DB[("공통 거래 저장소")]
+  Config["환경별 설정과 비밀값"] -.-> API
+  API --> Logs["중앙 로그 수집"]

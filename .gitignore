@@ -1,0 +1,12 @@
+data/
+evidence/
+__pycache__/
+*.tfstate*
+.terraform/
+*.tfplan
+.env
+
+.env
+.env.*
+!.env.example
+evidence/
