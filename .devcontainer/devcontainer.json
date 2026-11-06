@@ -5,7 +5,8 @@
     "ghcr.io/devcontainers/features/common-utils:2": {
       "username": "vscode"
     },
-    "ghcr.io/devcontainers/features/docker-in-docker:4": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
   },
   "remoteUser": "vscode",
   "postCreateCommand": "python configure_lab.py --init",
