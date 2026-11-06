@@ -34,7 +34,7 @@ docker compose run --rm --interactive=false client health
 
 evidence 폴더의 필요한 JSON 파일을 우클릭해 Download로 내려받습니다. 제출 문서는 별도로 저장합니다.
 `docker compose down`은 실습 컨테이너를 종료하는 명령입니다. 그 뒤 GitHub의 Codespaces 목록에서도 해당 Codespace의 Stop을 선택해야 개발 환경 실행이 멈춥니다.
-Codespace를 삭제하거나 개발 컨테이너를 재구성하기 전에는 결과를 내려받습니다. Docker 내부 볼륨 보존을 Codespaces 삭제 뒤 복구까지 보장하는 것으로 해석하지 않습니다.
+중지해도 저장공간 사용량은 남습니다. 더 사용하지 않을 환경은 필요한 결과를 내려받은 뒤 삭제합니다. Codespace를 삭제하거나 개발 컨테이너를 재구성하기 전에는 결과를 내려받습니다. Docker 내부 볼륨 보존을 Codespaces 삭제 뒤 복구까지 보장하는 것으로 해석하지 않습니다.
 
 ## 이용 조건
 
